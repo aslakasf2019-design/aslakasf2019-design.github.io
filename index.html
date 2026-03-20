@@ -99,7 +99,7 @@
             padding: 30px 20px;
             margin: 20px 0;
             position: relative;
-            min-height: 300px;
+            min-height: 350px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -108,7 +108,7 @@
         .deck-container {
             position: relative;
             width: 100%;
-            height: 280px;
+            height: 320px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -183,10 +183,14 @@
             border-color: #5f7a9a;
         }
         
+        /* Стиль для выделенной карты (поверх всех) */
         .card.selected {
             border-color: #ffffff;
-            box-shadow: 0 0 20px rgba(255,255,255,0.3);
-            background: linear-gradient(145deg, #304050, #283038);
+            box-shadow: 0 0 30px rgba(255,255,255,0.5);
+            background: linear-gradient(145deg, #304560, #283848);
+            transform: translateY(-40px) scale(1.15) !important;
+            z-index: 9999 !important;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.2);
         }
         
         .card .data-preview {
@@ -591,7 +595,7 @@
     const omegaList = [512, 1024, 2048, 4096, 8192, 16384];
     let chartInstance = null;
     let isFanned = false;
-    let selectedCardIndex = 0; // по умолчанию первый вариант
+    let selectedCardIndex = 0;
 
     // Функция форматирования чисел
     function formatNumber(x) {
@@ -650,11 +654,10 @@
     function fanCards() {
         const cards = document.querySelectorAll('.card');
         const totalCards = cards.length;
-        const fanAngle = 60; // общий угол веера
-        const radius = 350; // радиус дуги
+        const fanAngle = 60;
+        const radius = 350;
         
         cards.forEach((card, index) => {
-            // Расчет позиции на дуге
             const angle = (index - (totalCards - 1) / 2) * (fanAngle / totalCards);
             const rad = angle * Math.PI / 180;
             
@@ -687,8 +690,11 @@
         isFanned = false;
     }
 
-    // Функция выбора варианта
+    // Функция выбора варианта (с анимацией вылета)
     function selectVariant(index) {
+        // Если карта уже выбрана, не делаем ничего
+        if (selectedCardIndex === index) return;
+        
         // Снимаем выделение с предыдущей карты
         const prevSelected = document.querySelector('.card.selected');
         if (prevSelected) {
@@ -741,7 +747,7 @@
         let maxS = -Infinity;
         let bestOmega = omegaList[0];
 
-        for (let w of omegaList) {
+                for (let w of omegaList) {
             const p_packet = 1 - Math.pow(1 - d.pbit, w);
             const S_eff = (w - d.C) / (w / d.Sn + d.tn) * (1 - p_packet);
             results.push({w, p_packet, S_eff});
@@ -768,9 +774,13 @@
         document.getElementById('m_val').innerHTML = `round(log₂(${omega_opt.toFixed(2)})) = ${m}`;
         document.getElementById('omega_opt_pow2').innerHTML = `2<sup>${m}</sup> = ${omega_opt_pow2} бит`;
 
-        // График
+        // График - ИСПРАВЛЕННАЯ ВЕРСИЯ
         if (chartInstance) chartInstance.destroy();
         const ctx = document.getElementById('speedChart').getContext('2d');
+        
+        // Находим максимальное значение для оси Y
+        const maxY = Math.max(...results.map(r => r.S_eff)) * 1.1;
+        
         chartInstance = new Chart(ctx, {
             type: 'line',
             data: {
@@ -780,23 +790,80 @@
                     data: results.map(r => r.S_eff),
                     borderColor: '#b0c5d9',
                     backgroundColor: 'transparent',
-                    borderWidth: 2,
+                    borderWidth: 3,
                     pointBackgroundColor: '#ffffff',
                     pointBorderColor: '#ffffff',
-                    pointRadius: 5,
-                    pointHoverRadius: 7,
-                    tension: 0.1
+                    pointBorderWidth: 2,
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    tension: 0.1,
+                    fill: false
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { labels: { color: '#e0e0e0' } }
+                    legend: { 
+                        labels: { 
+                            color: '#e0e0e0',
+                            font: { size: 14 }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#1a2025',
+                        titleColor: '#ffffff',
+                        bodyColor: '#b0c5d9',
+                        borderColor: '#3a4555',
+                        borderWidth: 1
+                    }
                 },
                 scales: {
-                    x: { ticks: { color: '#b0b0b0' }, grid: { color: '#2a313a' } },
-                    y: { ticks: { color: '#b0b0b0' }, grid: { color: '#2a313a' } }
+                    x: { 
+                        ticks: { 
+                            color: '#b0b0b0',
+                            font: { size: 12 }
+                        }, 
+                        grid: { 
+                            color: '#2a313a',
+                            drawBorder: true
+                        },
+                        title: {
+                            display: true,
+                            text: 'Длина пакета ω, бит',
+                            color: '#e0e0e0',
+                            font: { size: 14 }
+                        }
+                    },
+                    y: { 
+                        min: 0,
+                        max: maxY,
+                        ticks: { 
+                            color: '#b0b0b0',
+                            font: { size: 12 },
+                            callback: function(value) {
+                                return formatNumber(value);
+                            }
+                        }, 
+                        grid: { 
+                            color: '#2a313a',
+                            drawBorder: true
+                        },
+                        title: {
+                            display: true,
+                            text: 'Эффективная скорость Sэ, бит/с',
+                            color: '#e0e0e0',
+                            font: { size: 14 }
+                        }
+                    }
+                },
+                layout: {
+                    padding: {
+                        top: 20,
+                        bottom: 20,
+                        left: 10,
+                        right: 10
+                    }
                 }
             }
         });
