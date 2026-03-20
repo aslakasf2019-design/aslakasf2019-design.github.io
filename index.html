@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Лабораторная работа №4-5: Принципы передачи информации</title>
+    <title>MADE BY ALWLEX</title>
     <style>
         * {
             margin: 0;
@@ -91,6 +92,185 @@
             background-color: #21282f;
         }
         
+        /* Стили для выбора варианта картами */
+        .selection-area {
+            background-color: #1a2025;
+            border: 1px solid #2a313a;
+            padding: 30px 20px;
+            margin: 20px 0;
+            position: relative;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .deck-container {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            perspective: 1000px;
+        }
+        
+        .card-deck {
+            position: relative;
+            width: 220px;
+            height: 280px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .card-deck:hover {
+            transform: scale(1.02);
+        }
+        
+        .card {
+            position: absolute;
+            width: 200px;
+            height: 260px;
+            background: linear-gradient(145deg, #2a3440, #1e2630);
+            border: 2px solid #3a4555;
+            border-radius: 12px;
+            box-shadow: 0 15px 25px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            backface-visibility: visible;
+            transform-origin: bottom center;
+            pointer-events: auto;
+        }
+        
+        .card .card-number {
+            font-size: 48px;
+            font-weight: bold;
+            color: #b0c5d9;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 10px;
+        }
+        
+        .card .card-label {
+            font-size: 14px;
+            color: #8a9bb0;
+            letter-spacing: 1px;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 1px solid #4a5768;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+        
+        .card.fanned {
+            box-shadow: 0 20px 30px rgba(0,0,0,0.6);
+            border-color: #5f7a9a;
+        }
+        
+        .card.selected {
+            border-color: #ffffff;
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+            background: linear-gradient(145deg, #304050, #283038);
+        }
+        
+        .card .data-preview {
+            font-size: 11px;
+            margin-top: 15px;
+            color: #7a8b9f;
+            text-align: left;
+            width: 80%;
+            border-top: 1px solid #3a4755;
+            padding-top: 10px;
+        }
+        
+        .data-preview div {
+            margin: 3px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .fan-button {
+            background-color: #2f3a44;
+            color: #ffffff;
+            border: 1px solid #455565;
+            padding: 15px 40px;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.3s;
+            letter-spacing: 2px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .fan-button:hover {
+            background-color: #3d4b58;
+            border-color: #5f7a9a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .fan-button:active {
+            transform: translateY(0);
+        }
+        
+        .fan-button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            20% { transform: translateX(100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+        
+        .selected-variant {
+            background-color: #1e2a33;
+            border: 1px solid #3a4b5a;
+            padding: 15px 25px;
+            margin-top: 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .selected-variant .badge {
+            background-color: #2a3743;
+            padding: 8px 15px;
+            border-radius: 3px;
+            color: #b0c5d9;
+            font-size: 18px;
+        }
+        
         .input-group {
             display: flex;
             flex-wrap: wrap;
@@ -140,7 +320,6 @@
             cursor: pointer;
             border-radius: 3px;
             transition: all 0.2s;
-            margin-top: 20px;
             letter-spacing: 1px;
         }
         
@@ -238,14 +417,18 @@
         <strong>Цель работы:</strong> изучение принципов передачи данных в компьютерных сетях и методики расчета оптимальной длины пакета с учетом вероятностных характеристик канала связи, структуры пакета, скорости передачи данных.
     </div>
 
-    <!-- Ввод варианта -->
-    <div class="input-group">
-        <div class="input-field">
-            <label>Номер варианта (1-25)</label>
-            <input type="number" id="variantInput" min="1" max="25" value="1">
+    <!-- ВЫБОР ВАРИАНТА КАРТАМИ -->
+    <h2>ВЫБОР ВАРИАНТА</h2>
+    <div class="selection-area">
+        <button class="fan-button" id="fanButton">РАЗДАТЬ КАРТЫ</button>
+        
+        <div class="deck-container" id="deckContainer">
+            <div class="card-deck" id="cardDeck"></div>
         </div>
-        <div style="display: flex; align-items: flex-end;">
-            <button id="calculateBtn">РАССЧИТАТЬ</button>
+        
+        <div class="selected-variant" id="selectedVariant">
+            <span class="badge">ВЫБРАН ВАРИАНТ: <span id="selectedVariantNumber">1</span></span>
+            <span id="selectedVariantPreview">l=32000 бит, C=64 бит, p=1e-4</span>
         </div>
     </div>
 
@@ -407,6 +590,8 @@
     // Заданные длины пакетов для перебора
     const omegaList = [512, 1024, 2048, 4096, 8192, 16384];
     let chartInstance = null;
+    let isFanned = false;
+    let selectedCardIndex = 0; // по умолчанию первый вариант
 
     // Функция форматирования чисел
     function formatNumber(x) {
@@ -419,6 +604,114 @@
 
     function formatP(x) {
         return x.toExponential(2);
+    }
+
+    // Функция создания карт
+    function createCards() {
+        const deck = document.getElementById('cardDeck');
+        deck.innerHTML = '';
+        
+        for (let i = 0; i < variantsData.length; i++) {
+            const card = document.createElement('div');
+            card.className = 'card' + (i === selectedCardIndex ? ' selected' : '');
+            card.dataset.index = i;
+            card.style.zIndex = i + 1;
+            
+            // Базовое положение (стопка)
+            const offsetX = i * 2;
+            const offsetY = i * 1.5;
+            const rotate = i * 1.5;
+            
+            card.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(${rotate}deg)`;
+            
+            // Содержимое карты
+            const d = variantsData[i];
+            card.innerHTML = `
+                <div class="card-number">${i+1}</div>
+                <div class="card-label">ВАРИАНТ</div>
+                <div class="data-preview">
+                    <div>l: ${d.l} бит</div>
+                    <div>C: ${d.C} бит</div>
+                    <div>p: ${d.pbit.toExponential(0)}</div>
+                </div>
+            `;
+            
+            card.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const index = parseInt(card.dataset.index);
+                selectVariant(index);
+            });
+            
+            deck.appendChild(card);
+        }
+    }
+
+    // Функция раздачи карт веером
+    function fanCards() {
+        const cards = document.querySelectorAll('.card');
+        const totalCards = cards.length;
+        const fanAngle = 60; // общий угол веера
+        const radius = 350; // радиус дуги
+        
+        cards.forEach((card, index) => {
+            // Расчет позиции на дуге
+            const angle = (index - (totalCards - 1) / 2) * (fanAngle / totalCards);
+            const rad = angle * Math.PI / 180;
+            
+            const x = radius * Math.sin(rad);
+            const y = -Math.abs(radius * (1 - Math.cos(rad))) * 0.3;
+            const rotate = angle * 0.8;
+            
+            card.style.transform = `translate(${x}px, ${y}px) rotate(${rotate}deg)`;
+            card.style.zIndex = Math.floor(angle + 50);
+            card.classList.add('fanned');
+        });
+        
+        isFanned = true;
+    }
+
+    // Функция сборки карт в стопку
+    function stackCards() {
+        const cards = document.querySelectorAll('.card');
+        
+        cards.forEach((card, index) => {
+            const offsetX = index * 2;
+            const offsetY = index * 1.5;
+            const rotate = index * 1.5;
+            
+            card.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(${rotate}deg)`;
+            card.style.zIndex = index + 1;
+            card.classList.remove('fanned');
+        });
+        
+        isFanned = false;
+    }
+
+    // Функция выбора варианта
+    function selectVariant(index) {
+        // Снимаем выделение с предыдущей карты
+        const prevSelected = document.querySelector('.card.selected');
+        if (prevSelected) {
+            prevSelected.classList.remove('selected');
+        }
+        
+        // Выделяем новую карту
+        const cards = document.querySelectorAll('.card');
+        cards[index].classList.add('selected');
+        
+        selectedCardIndex = index;
+        
+        // Обновляем отображение выбранного варианта
+        const d = variantsData[index];
+        document.getElementById('selectedVariantNumber').textContent = index + 1;
+        document.getElementById('selectedVariantPreview').textContent = 
+            `l=${d.l} бит, C=${d.C} бит, p=${d.pbit.toExponential(0)}`;
+        
+        // Обновляем поле ввода варианта для обратной совместимости
+        document.getElementById('variantInput').value = index + 1;
+        
+        // Выполняем расчет
+        calculate();
     }
 
     // Обновление интерфейса при расчете
@@ -509,8 +802,37 @@
         });
     }
 
-    document.getElementById('calculateBtn').addEventListener('click', calculate);
-    window.addEventListener('load', calculate);
+    // Инициализация
+    window.addEventListener('load', () => {
+        createCards();
+        
+        // Устанавливаем начальный выбор
+        setTimeout(() => {
+            selectVariant(0);
+        }, 100);
+    });
+
+    // Обработчик кнопки раздачи
+    document.getElementById('fanButton').addEventListener('click', () => {
+        if (isFanned) {
+            stackCards();
+        } else {
+            fanCards();
+        }
+    });
+
+    // Для совместимости со старым вводом
+    document.getElementById('calculateBtn').addEventListener('click', () => {
+        const varNum = parseInt(document.getElementById('variantInput').value) - 1;
+        selectVariant(varNum);
+    });
+
+    document.getElementById('variantInput').addEventListener('change', (e) => {
+        const varNum = parseInt(e.target.value) - 1;
+        if (varNum >= 0 && varNum < variantsData.length) {
+            selectVariant(varNum);
+        }
+    });
 </script>
 </body>
 </html>
