@@ -714,7 +714,6 @@
             `l=${d.l} бит, C=${d.C} бит, p=${d.pbit.toExponential(0)}`;
         
         // Обновляем поле ввода варианта для обратной совместимости
-        document.getElementById('variantInput').value = index + 1;
         
         // Выполняем расчет
         calculate();
@@ -871,13 +870,16 @@
 
     // Инициализация
     window.addEventListener('load', () => {
-        createCards();
-        
-        // Устанавливаем начальный выбор
-        setTimeout(() => {
+    createCards();
+    // Устанавливаем начальный выбор через 100мс
+    setTimeout(() => {
+        // Проверяем существование карт перед выбором
+        const cards = document.querySelectorAll('.card');
+        if (cards.length > 0) {
             selectVariant(0);
-        }, 100);
-    });
+        }
+    }, 100);
+});
 
     // Обработчик кнопки раздачи
     document.getElementById('fanButton').addEventListener('click', () => {
@@ -888,11 +890,7 @@
         }
     });
 
-    // Для совместимости со старым вводом
-    document.getElementById('calculateBtn').addEventListener('click', () => {
-        const varNum = parseInt(document.getElementById('variantInput').value) - 1;
-        selectVariant(varNum);
-    });
+   
 
     document.getElementById('variantInput').addEventListener('change', (e) => {
         const varNum = parseInt(e.target.value) - 1;
