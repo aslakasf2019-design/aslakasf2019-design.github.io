@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Лабораторная работа №4-5: Принципы передачи информации</title>
+    <title>MADE BY ALWLEX</title>
     <style>
         * {
             margin: 0;
@@ -182,13 +183,13 @@
             border-color: #5f7a9a;
         }
         
-        .card.selected {
-            border-color: #ffd700;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
-            background: linear-gradient(145deg, #3a4a60, #2a3848);
-            transform: translateY(-30px) !important;
-            z-index: 1000 !important;
-        }
+       .card.selected {
+    border-color: #5f7a9a;
+    box-shadow: 0 0 20px rgba(95, 122, 154, 0.5);
+    background: linear-gradient(145deg, #2a3440, #1e2630);
+    z-index: 1000 !important;
+}
+
         
         .card .data-preview {
             font-size: 11px;
@@ -658,15 +659,22 @@
         }
     }
 
-    // Функция раздачи карт веером
-    function fanCards() {
-        const cards = document.querySelectorAll('.card');
-        const totalCards = cards.length;
-        const fanAngle = 60; // общий угол веера
-        const radius = 350; // радиус дуги
-        
-        cards.forEach((card, index) => {
-            // Расчет позиции на дуге
+   // Функция раздачи карт веером
+function fanCards() {
+    const cards = document.querySelectorAll('.card');
+    const totalCards = cards.length;
+    const fanAngle = 60; // общий угол веера
+    const radius = 350; // радиус дуги
+    const selectedCard = document.querySelector('.card.selected');
+    
+    cards.forEach((card, index) => {
+        // Если это выбранная карта - размещаем её отдельно справа
+        if (card === selectedCard) {
+            card.style.transform = `translate(450px, -50px) rotate(0deg)`;
+            card.style.zIndex = 1000;
+            card.classList.add('fanned');
+        } else {
+            // Расчет позиции на дуге для остальных карт
             const angle = (index - (totalCards - 1) / 2) * (fanAngle / totalCards);
             const rad = angle * Math.PI / 180;
             
@@ -677,71 +685,85 @@
             card.style.transform = `translate(${x}px, ${y}px) rotate(${rotate}deg)`;
             card.style.zIndex = Math.floor(angle + 50);
             card.classList.add('fanned');
-        });
-        
-        isFanned = true;
-    }
+        }
+    });
+    
+    isFanned = true;
+}
 
-    // Функция сборки карт в стопку
-    function stackCards() {
-        const cards = document.querySelectorAll('.card');
-        
-        cards.forEach((card, index) => {
+   // Функция сборки карт в стопку
+function stackCards() {
+    const cards = document.querySelectorAll('.card');
+    const selectedCard = document.querySelector('.card.selected');
+    
+    cards.forEach((card, index) => {
+        // Если это выбранная карта - размещаем её отдельно справа
+        if (card === selectedCard) {
+            card.style.transform = `translate(450px, -50px) rotate(0deg)`;
+            card.style.zIndex = 1000;
+        } else {
+            // Остальные карты в стопке
             const offsetX = index * 2;
             const offsetY = index * 1.5;
             const rotate = index * 1.5;
-            
             card.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(${rotate}deg)`;
             card.style.zIndex = index + 1;
-            card.classList.remove('fanned');
-        });
-        
-        isFanned = false;
+        }
+        card.classList.remove('fanned');
+    });
+    
+    isFanned = false;
+}
+   // Функция выбора варианта
+function selectVariant(index) {
+    // Снимаем выделение с предыдущей карты
+    const prevSelected = document.querySelector('.card.selected');
+    if (prevSelected) {
+        prevSelected.classList.remove('selected');
     }
-
-    // Функция выбора варианта
-    function selectVariant(index) {
-        // Снимаем выделение с предыдущей карты
-        const prevSelected = document.querySelector('.card.selected');
-        if (prevSelected) {
-            prevSelected.classList.remove('selected');
-        }
-        
-        // Выделяем новую карту
-        const cards = document.querySelectorAll('.card');
-        if (cards && cards.length > index) {
-            cards[index].classList.add('selected');
-        }
-        
-        selectedCardIndex = index;
-        
-        // Обновляем отображение выбранного варианта
-        const d = variantsData[index];
-        const selectedVariantNumberEl = document.getElementById('selectedVariantNumber');
-        const selectedVariantPreviewEl = document.getElementById('selectedVariantPreview');
-        const variantInputEl = document.getElementById('variantInput');
-        const footerVarEl = document.getElementById('footerVar');
-        
-        if (selectedVariantNumberEl) {
-            selectedVariantNumberEl.textContent = index + 1;
-        }
-        
-        if (selectedVariantPreviewEl) {
-            selectedVariantPreviewEl.textContent = `l=${d.l} бит, C=${d.C} бит, p=${d.pbit.toExponential(0)}`;
-        }
-        
-        // Обновляем поле ввода варианта для обратной совместимости
-        if (variantInputEl) {
-            variantInputEl.value = index + 1;
-        }
-        
-        if (footerVarEl) {
-            footerVarEl.textContent = index + 1;
-        }
-        
-        // Выполняем расчет
-        calculate();
+    
+    // Выделяем новую карту
+    const cards = document.querySelectorAll('.card');
+    if (cards && cards.length > index) {
+        cards[index].classList.add('selected');
     }
+    
+    selectedCardIndex = index;
+    
+    // Обновляем позиции карт в зависимости от текущего состояния
+    if (isFanned) {
+        fanCards(); // Перерисовываем веер с учетом нового выделения
+    } else {
+        stackCards(); // Перерисовываем стопку с учетом нового выделения
+    }
+    
+    // Обновляем отображение выбранного варианта
+    const d = variantsData[index];
+    const selectedVariantNumberEl = document.getElementById('selectedVariantNumber');
+    const selectedVariantPreviewEl = document.getElementById('selectedVariantPreview');
+    const variantInputEl = document.getElementById('variantInput');
+    const footerVarEl = document.getElementById('footerVar');
+    
+    if (selectedVariantNumberEl) {
+        selectedVariantNumberEl.textContent = index + 1;
+    }
+    
+    if (selectedVariantPreviewEl) {
+        selectedVariantPreviewEl.textContent = `l=${d.l} бит, C=${d.C} бит, p=${d.pbit.toExponential(0)}`;
+    }
+    
+    // Обновляем поле ввода варианта для обратной совместимости
+    if (variantInputEl) {
+        variantInputEl.value = index + 1;
+    }
+    
+    if (footerVarEl) {
+        footerVarEl.textContent = index + 1;
+    }
+    
+    // Выполняем расчет
+    calculate();
+}
 
     // Обновление интерфейса при расчете
     function calculate() {
