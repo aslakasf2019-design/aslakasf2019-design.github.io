@@ -98,7 +98,7 @@
             padding: 30px 20px;
             margin: 20px 0;
             position: relative;
-            min-height: 300px;
+            min-height: 400px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -107,7 +107,7 @@
         .deck-container {
             position: relative;
             width: 100%;
-            height: 280px;
+            height: 350px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -183,9 +183,11 @@
         }
         
         .card.selected {
-            border-color: #ffffff;
-            box-shadow: 0 0 20px rgba(255,255,255,0.3);
-            background: linear-gradient(145deg, #304050, #283038);
+            border-color: #ffd700;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            background: linear-gradient(145deg, #3a4a60, #2a3848);
+            transform: translateY(-30px) !important;
+            z-index: 1000 !important;
         }
         
         .card .data-preview {
@@ -278,6 +280,7 @@
             padding: 20px;
             border: 1px solid #2a313a;
             margin: 20px 0;
+            align-items: flex-end;
         }
         
         .input-field {
@@ -431,8 +434,18 @@
         </div>
     </div>
 
-    <!-- Исходные данные -->
+    <!-- Исходные данные и ручной ввод варианта -->
     <h2>ИСХОДНЫЕ ДАННЫЕ</h2>
+    
+    <!-- Добавленные элементы для ввода варианта -->
+    <div class="input-group">
+        <div class="input-field">
+            <label for="variantInput">Номер варианта (1-25):</label>
+            <input type="number" id="variantInput" min="1" max="25" value="1">
+        </div>
+        <button id="calculateBtn">РАССЧИТАТЬ</button>
+    </div>
+    
     <table id="initialDataTable">
         <thead>
             <tr><th>Параметр</th><th>Обозначение</th><th>Значение</th></tr>
@@ -696,18 +709,35 @@
         
         // Выделяем новую карту
         const cards = document.querySelectorAll('.card');
-        cards[index].classList.add('selected');
+        if (cards && cards.length > index) {
+            cards[index].classList.add('selected');
+        }
         
         selectedCardIndex = index;
         
         // Обновляем отображение выбранного варианта
         const d = variantsData[index];
-        document.getElementById('selectedVariantNumber').textContent = index + 1;
-        document.getElementById('selectedVariantPreview').textContent = 
-            `l=${d.l} бит, C=${d.C} бит, p=${d.pbit.toExponential(0)}`;
+        const selectedVariantNumberEl = document.getElementById('selectedVariantNumber');
+        const selectedVariantPreviewEl = document.getElementById('selectedVariantPreview');
+        const variantInputEl = document.getElementById('variantInput');
+        const footerVarEl = document.getElementById('footerVar');
+        
+        if (selectedVariantNumberEl) {
+            selectedVariantNumberEl.textContent = index + 1;
+        }
+        
+        if (selectedVariantPreviewEl) {
+            selectedVariantPreviewEl.textContent = `l=${d.l} бит, C=${d.C} бит, p=${d.pbit.toExponential(0)}`;
+        }
         
         // Обновляем поле ввода варианта для обратной совместимости
-        document.getElementById('variantInput').value = index + 1;
+        if (variantInputEl) {
+            variantInputEl.value = index + 1;
+        }
+        
+        if (footerVarEl) {
+            footerVarEl.textContent = index + 1;
+        }
         
         // Выполняем расчет
         calculate();
@@ -715,25 +745,40 @@
 
     // Обновление интерфейса при расчете
     function calculate() {
-        const varNum = parseInt(document.getElementById('variantInput').value) - 1;
+        const variantInputEl = document.getElementById('variantInput');
+        if (!variantInputEl) return;
+        
+        const varNum = parseInt(variantInputEl.value) - 1;
         if (varNum < 0 || varNum >= variantsData.length) return;
         
         const d = variantsData[varNum];
         
-        // Отображение исходных данных
-        document.getElementById('l_val').innerText = d.l + ' бит';
-        document.getElementById('C_val').innerText = d.C + ' бит';
-        document.getElementById('Sn_val').innerText = formatNumber(d.Sn) + ' бит/с';
-        document.getElementById('K1_val').innerText = d.K1;
-        document.getElementById('tn_val').innerText = d.tn + ' с';
-        document.getElementById('pbit_val').innerText = formatP(d.pbit);
-        document.getElementById('footerVar').innerText = varNum + 1;
+        // Проверяем существование всех элементов перед обновлением
+        const l_val = document.getElementById('l_val');
+        const C_val = document.getElementById('C_val');
+        const Sn_val = document.getElementById('Sn_val');
+        const K1_val = document.getElementById('K1_val');
+        const tn_val = document.getElementById('tn_val');
+        const pbit_val = document.getElementById('pbit_val');
+        const footerVar = document.getElementById('footerVar');
+        
+        if (l_val) l_val.innerText = d.l + ' бит';
+        if (C_val) C_val.innerText = d.C + ' бит';
+        if (Sn_val) Sn_val.innerText = formatNumber(d.Sn) + ' бит/с';
+        if (K1_val) K1_val.innerText = d.K1;
+        if (tn_val) tn_val.innerText = d.tn + ' с';
+        if (pbit_val) pbit_val.innerText = formatP(d.pbit);
+        if (footerVar) footerVar.innerText = varNum + 1;
 
         // Расчет omega2
         const omega2 = Math.sqrt(d.l * d.C);
         const omega2k = d.K1 * omega2;
-        document.getElementById('omega2_formula').innerHTML = `√(${d.l}·${d.C}) = ${omega2.toFixed(2)} бит`;
-        document.getElementById('omega2k_formula').innerHTML = `${d.K1} · ${omega2.toFixed(2)} = ${omega2k.toFixed(2)} бит`;
+        
+        const omega2_formula = document.getElementById('omega2_formula');
+        const omega2k_formula = document.getElementById('omega2k_formula');
+        
+        if (omega2_formula) omega2_formula.innerHTML = `√(${d.l}·${d.C}) = ${omega2.toFixed(2)} бит`;
+        if (omega2k_formula) omega2k_formula.innerHTML = `${d.K1} · ${omega2.toFixed(2)} = ${omega2k.toFixed(2)} бит`;
 
         // Перебор omega
         let results = [];
@@ -751,86 +796,120 @@
         }
 
         // Заполнение таблицы
-        let tableHtml = '';
-        for (let r of results) {
-            tableHtml += `<tr><td>${r.w}</td><td>${formatP(r.p_packet)}</td><td>${formatNumber(r.S_eff)}</td></tr>`;
+        const omegaBody = document.getElementById('omegaBody');
+        if (omegaBody) {
+            let tableHtml = '';
+            for (let r of results) {
+                tableHtml += `<tr><td>${r.w}</td><td>${formatP(r.p_packet)}</td><td>${formatNumber(r.S_eff)}</td></tr>`;
+            }
+            omegaBody.innerHTML = tableHtml;
         }
-        document.getElementById('omegaBody').innerHTML = tableHtml;
-        document.getElementById('omega3_result').innerHTML = `Максимум: ω₃ = ${bestOmega} бит, Sэ_max = ${formatNumber(maxS)} бит/с`;
+        
+        const omega3_result = document.getElementById('omega3_result');
+        if (omega3_result) {
+            omega3_result.innerHTML = `Максимум: ω₃ = ${bestOmega} бит, Sэ_max = ${formatNumber(maxS)} бит/с`;
+        }
 
         // Оптимальная длина
         const omega_opt = (omega2k + bestOmega) / 2;
         const m = Math.round(Math.log2(omega_opt));
         const omega_opt_pow2 = Math.pow(2, m);
         
-        document.getElementById('omega_opt').innerHTML = `(${omega2k.toFixed(2)} + ${bestOmega}) / 2 = ${omega_opt.toFixed(2)} бит`;
-        document.getElementById('m_val').innerHTML = `round(log₂(${omega_opt.toFixed(2)})) = ${m}`;
-        document.getElementById('omega_opt_pow2').innerHTML = `2<sup>${m}</sup> = ${omega_opt_pow2} бит`;
+        const omega_opt_el = document.getElementById('omega_opt');
+        const m_val_el = document.getElementById('m_val');
+        const omega_opt_pow2_el = document.getElementById('omega_opt_pow2');
+        
+        if (omega_opt_el) {
+            omega_opt_el.innerHTML = `(${omega2k.toFixed(2)} + ${bestOmega}) / 2 = ${omega_opt.toFixed(2)} бит`;
+        }
+        
+        if (m_val_el) {
+            m_val_el.innerHTML = `round(log₂(${omega_opt.toFixed(2)})) = ${m}`;
+        }
+        
+        if (omega_opt_pow2_el) {
+            omega_opt_pow2_el.innerHTML = `2<sup>${m}</sup> = ${omega_opt_pow2} бит`;
+        }
 
         // График
-        if (chartInstance) chartInstance.destroy();
-        const ctx = document.getElementById('speedChart').getContext('2d');
-        chartInstance = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: results.map(r => r.w + ' бит'),
-                datasets: [{
-                    label: 'Эффективная скорость Sэ, бит/с',
-                    data: results.map(r => r.S_eff),
-                    borderColor: '#b0c5d9',
-                    backgroundColor: 'transparent',
-                    borderWidth: 2,
-                    pointBackgroundColor: '#ffffff',
-                    pointBorderColor: '#ffffff',
-                    pointRadius: 5,
-                    pointHoverRadius: 7,
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { labels: { color: '#e0e0e0' } }
+        const ctx = document.getElementById('speedChart')?.getContext('2d');
+        if (ctx) {
+            if (chartInstance) chartInstance.destroy();
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: results.map(r => r.w + ' бит'),
+                    datasets: [{
+                        label: 'Эффективная скорость Sэ, бит/с',
+                        data: results.map(r => r.S_eff),
+                        borderColor: '#b0c5d9',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: '#ffffff',
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        tension: 0.1
+                    }]
                 },
-                scales: {
-                    x: { ticks: { color: '#b0b0b0' }, grid: { color: '#2a313a' } },
-                    y: { ticks: { color: '#b0b0b0' }, grid: { color: '#2a313a' } }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#e0e0e0' } }
+                    },
+                    scales: {
+                        x: { ticks: { color: '#b0b0b0' }, grid: { color: '#2a313a' } },
+                        y: { ticks: { color: '#b0b0b0' }, grid: { color: '#2a313a' } }
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     // Инициализация
     window.addEventListener('load', () => {
         createCards();
         
+        // Проверяем существование элементов перед добавлением обработчиков
+        const fanButton = document.getElementById('fanButton');
+        if (fanButton) {
+            fanButton.addEventListener('click', () => {
+                if (isFanned) {
+                    stackCards();
+                } else {
+                    fanCards();
+                }
+            });
+        }
+
+        const calculateBtn = document.getElementById('calculateBtn');
+        if (calculateBtn) {
+            calculateBtn.addEventListener('click', () => {
+                const variantInput = document.getElementById('variantInput');
+                if (variantInput) {
+                    const varNum = parseInt(variantInput.value) - 1;
+                    if (varNum >= 0 && varNum < variantsData.length) {
+                        selectVariant(varNum);
+                    }
+                }
+            });
+        }
+
+        const variantInput = document.getElementById('variantInput');
+        if (variantInput) {
+            variantInput.addEventListener('change', (e) => {
+                const varNum = parseInt(e.target.value) - 1;
+                if (varNum >= 0 && varNum < variantsData.length) {
+                    selectVariant(varNum);
+                }
+            });
+        }
+        
         // Устанавливаем начальный выбор
         setTimeout(() => {
             selectVariant(0);
         }, 100);
-    });
-
-    // Обработчик кнопки раздачи
-    document.getElementById('fanButton').addEventListener('click', () => {
-        if (isFanned) {
-            stackCards();
-        } else {
-            fanCards();
-        }
-    });
-
-    // Для совместимости со старым вводом
-    document.getElementById('calculateBtn').addEventListener('click', () => {
-        const varNum = parseInt(document.getElementById('variantInput').value) - 1;
-        selectVariant(varNum);
-    });
-
-    document.getElementById('variantInput').addEventListener('change', (e) => {
-        const varNum = parseInt(e.target.value) - 1;
-        if (varNum >= 0 && varNum < variantsData.length) {
-            selectVariant(varNum);
-        }
     });
 </script>
 </body>
