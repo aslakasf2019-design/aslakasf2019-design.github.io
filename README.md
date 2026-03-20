@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторная работа №4-5: Принципы передачи информации</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #0a0c0e;
+            color: #e0e0e0;
+            font-family: 'Courier New', 'Roboto Mono', monospace;
+            line-height: 1.6;
+            padding: 30px 20px;
+        }
+        
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background-color: #14181c;
+            border: 1px solid #2a2f35;
+            border-radius: 4px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        h1, h2, h3 {
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            font-weight: 400;
+            border-bottom: 1px solid #2a2f35;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 28px;
+            border-bottom: 2px solid #3a4048;
+            text-align: center;
+            padding-bottom: 15px;
+            margin-top: 0;
+        }
+        
+        h2 {
+            font-size: 22px;
+        }
+        
+        h3 {
+            font-size: 18px;
+            border-bottom: 1px dashed #2a2f35;
+        }
+        
+        .info-box {
+            background-color: #1e2429;
+            border-left: 4px solid #5f6b7a;
+            padding: 15px 20px;
+            margin: 20px 0;
+            font-size: 15px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #1a2025;
+            font-size: 14px;
+        }
+        
+        th {
+            background-color: #252c33;
+            color: #ffffff;
+            font-weight: 500;
+            text-align: center;
+            padding: 12px 8px;
+            border: 1px solid #323a43;
+        }
+        
+        td {
+            padding: 10px 8px;
+            border: 1px solid #2a313a;
+            text-align: center;
+        }
+        
+        tr:hover {
+            background-color: #21282f;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            background-color: #1a2025;
+            padding: 20px;
+            border: 1px solid #2a313a;
+            margin: 20px 0;
+        }
+        
+        .input-field {
+            flex: 1 1 200px;
+        }
+        
+        .input-field label {
+            display: block;
+            margin-bottom: 6px;
+            color: #a0b0c0;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .input-field input, .input-field select {
+            width: 100%;
+            background-color: #0f1419;
+            border: 1px solid #2f3a44;
+            color: #ffffff;
+            padding: 10px 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 15px;
+            border-radius: 3px;
+        }
+        
+        .input-field input:focus, .input-field select:focus {
+            outline: none;
+            border-color: #5f7a9a;
+        }
+        
+        button {
+            background-color: #2f3a44;
+            color: #ffffff;
+            border: 1px solid #455565;
+            padding: 12px 28px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.2s;
+            margin-top: 20px;
+            letter-spacing: 1px;
+        }
+        
+        button:hover {
+            background-color: #3d4b58;
+            border-color: #5f7a9a;
+        }
+        
+        .result-block {
+            background-color: #1a2025;
+            border: 1px solid #2f3a44;
+            padding: 20px;
+            margin: 25px 0;
+        }
+        
+        .result-line {
+            font-size: 16px;
+            margin: 12px 0;
+            font-family: 'Courier New', monospace;
+            border-bottom: 1px dotted #2a313a;
+            padding-bottom: 8px;
+        }
+        
+        .result-value {
+            color: #b0c5d9;
+            font-weight: bold;
+            background-color: #1f2a33;
+            padding: 2px 8px;
+            border-radius: 2px;
+        }
+        
+        .chart-container {
+            background-color: #1a2025;
+            padding: 20px;
+            border: 1px solid #2f3a44;
+            margin: 30px 0;
+            height: 400px;
+        }
+        
+        .footer-note {
+            text-align: right;
+            color: #5f6b7a;
+            font-size: 13px;
+            margin-top: 40px;
+            border-top: 1px solid #2a313a;
+            padding-top: 15px;
+        }
+        
+        .qa-section {
+            background-color: #1e2429;
+            padding: 20px;
+            margin: 30px 0;
+        }
+        
+        .qa-item {
+            margin: 20px 0;
+        }
+        
+        .qa-question {
+            color: #ffffff;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .qa-answer {
+            padding-left: 20px;
+            border-left: 2px solid #3a4b5a;
+            color: #c0d0e0;
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px solid #2a313a;
+            margin: 30px 0;
+        }
+        
+        .badge {
+            display: inline-block;
+            background-color: #2a3743;
+            padding: 3px 8px;
+            font-size: 12px;
+            border-radius: 2px;
+            color: #b0c5d9;
+        }
+    </style>
+    <!-- Chart.js для графиков -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1>ЛАБОРАТОРНАЯ РАБОТА №4-5</h1>
+    <h2>ПРИНЦИПЫ ПЕРЕДАЧИ ИНФОРМАЦИИ В КОМПЬЮТЕРНЫХ СЕТЯХ</h2>
+    
+    <div class="info-box">
+        <strong>Цель работы:</strong> изучение принципов передачи данных в компьютерных сетях и методики расчета оптимальной длины пакета с учетом вероятностных характеристик канала связи, структуры пакета, скорости передачи данных.
+    </div>
+
+    <!-- Ввод варианта -->
+    <div class="input-group">
+        <div class="input-field">
+            <label>Номер варианта (1-25)</label>
+            <input type="number" id="variantInput" min="1" max="25" value="1">
+        </div>
+        <div style="display: flex; align-items: flex-end;">
+            <button id="calculateBtn">РАССЧИТАТЬ</button>
+        </div>
+    </div>
+
+    <!-- Исходные данные -->
+    <h2>ИСХОДНЫЕ ДАННЫЕ</h2>
+    <table id="initialDataTable">
+        <thead>
+            <tr><th>Параметр</th><th>Обозначение</th><th>Значение</th></tr>
+        </thead>
+        <tbody id="initialDataBody">
+            <tr><td>Средняя длина сообщения</td><td>l, бит</td><td id="l_val">-</td></tr>
+            <tr><td>Длина заголовка</td><td>C, бит</td><td id="C_val">-</td></tr>
+            <tr><td>Номинальная скорость</td><td>Sн, бит/с</td><td id="Sn_val">-</td></tr>
+            <tr><td>Коэф. системных издержек</td><td>K₁</td><td id="K1_val">-</td></tr>
+            <tr><td>Время смены направления</td><td>tн, с</td><td id="tn_val">-</td></tr>
+            <tr><td>Вероятность искажения бита</td><td>p_бит</td><td id="pbit_val">-</td></tr>
+        </tbody>
+    </table>
+
+    <!-- Результаты расчетов -->
+    <h2>РЕЗУЛЬТАТЫ РАСЧЕТА</h2>
+    
+    <div class="result-block">
+        <h3>РАСЧЕТ ω₂ (рациональная длина с точки зрения памяти)</h3>
+        <div class="result-line">ω₂ = √(l · C) = <span class="result-value" id="omega2_formula">-</span></div>
+        <div class="result-line">ω₂' = K₁ · ω₂ = <span class="result-value" id="omega2k_formula">-</span></div>
+    </div>
+
+    <div class="result-block">
+        <h3>ПЕРЕБОР ДЛИН ПАКЕТОВ (ω₃)</h3>
+        <table id="omegaTable">
+            <thead>
+                <tr><th>ω, бит</th><th>p_пакета</th><th>Sэ, бит/с</th></tr>
+            </thead>
+            <tbody id="omegaBody">
+                <tr><td colspan="3">Выполните расчет</td></tr>
+            </tbody>
+        </table>
+        <div class="result-line" id="omega3_result" style="margin-top: 15px;">Максимум: -</div>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="speedChart"></canvas>
+    </div>
+
+    <div class="result-block">
+        <h3>ОПТИМАЛЬНАЯ ДЛИНА ПАКЕТА ω*</h3>
+        <div class="result-line">ω* = (ω₂' + ω₃) / 2 = <span class="result-value" id="omega_opt">-</span></div>
+        <div class="result-line">Округление до 2^m: m = round(log₂(ω*)) = <span class="result-value" id="m_val">-</span></div>
+        <div class="result-line">ω*_opt = 2^m = <span class="result-value" id="omega_opt_pow2">-</span></div>
+    </div>
+
+    <hr>
+
+    <!-- КОНТРОЛЬНЫЕ ВОПРОСЫ -->
+    <h2>КОНТРОЛЬНЫЕ ВОПРОСЫ</h2>
+    
+    <div class="qa-section">
+        <div class="qa-item">
+            <div class="qa-question">1. Структура типового пакета</div>
+            <div class="qa-answer">
+                <p>Типовой пакет содержит следующие поля:</p>
+                <table>
+                    <tr><th>Поле</th><th>Назначение</th></tr>
+                    <tr><td>Преамбула</td><td>Настройка аппаратуры на прием, синхронизация</td></tr>
+                    <tr><td>Адрес получателя</td><td>Идентификатор абонента-получателя</td></tr>
+                    <tr><td>Адрес отправителя</td><td>Идентификатор абонента-отправителя</td></tr>
+                    <tr><td>Служебная информация</td><td>Тип пакета, номер, размер, маршрут</td></tr>
+                    <tr><td>Поле данных</td><td>Полезная информация (переменной длины)</td></tr>
+                    <tr><td>Контрольная сумма</td><td>CRC для проверки целостности</td></tr>
+                    <tr><td>Стоповая комбинация</td><td>Сигнал об окончании пакета</td></tr>
+                </table>
+                <p style="margin-top: 10px;">Поле данных может отсутствовать в управляющих пакетах. Преамбула и стоповая комбинация могут отсутствовать при использовании самосинхронизирующихся кодов.</p>
+            </div>
+        </div>
+
+        <div class="qa-item">
+            <div class="qa-question">2. Алгоритм протокола обмена информацией</div>
+            <div class="qa-answer">
+                <p>Базовый протокол обмена (сеанс связи):</p>
+                <ol style="margin-left: 20px; list-style-type: decimal; color: #c0d0e0;">
+                    <li>Передатчик → Запрос готовности → Приемник</li>
+                    <li>Приемник проверяет готовность:
+                        <ul style="list-style-type: none; margin-left: 20px;">
+                            <li>• Если не готов → Отказ (конец сеанса)</li>
+                            <li>• Если готов → Готовность → Передатчик</li>
+                        </ul>
+                    </li>
+                    <li>Цикл передачи данных:
+                        <ul style="list-style-type: none; margin-left: 20px;">
+                            <li>• Передатчик → Пакет данных → Приемник</li>
+                            <li>• Приемник проверяет контрольную сумму</li>
+                            <li>• Если ошибок нет → Подтверждение</li>
+                            <li>• Если ошибка → Запрос повторной передачи</li>
+                        </ul>
+                    </li>
+                    <li>Передатчик → Конец связи → Приемник</li>
+                </ol>
+                <p>Используются управляющие пакеты: Запрос, Готовность, Подтверждение, Конец.</p>
+            </div>
+        </div>
+
+        <div class="qa-item">
+            <div class="qa-question">3. Алгоритм расчета оптимальной длины пакета</div>
+            <div class="qa-answer">
+                <p><strong>Шаг 1.</strong> Сбор исходных данных: l, C, Sн, K₁, tн, p_бит.</p>
+                <p><strong>Шаг 2.</strong> Расчет ω₂ с точки зрения памяти:</p>
+                <p style="margin-left: 20px;">ω₂ = √(l · C);  ω₂' = K₁ · ω₂</p>
+                <p><strong>Шаг 3.</strong> Для каждого ω из заданного ряда (512,1024,2048,4096,8192,16384):</p>
+                <p style="margin-left: 20px;">p_пакета = 1 - (1 - p_бит)<sup>ω</sup></p>
+                <p style="margin-left: 20px;">Sэ = (ω - C) / (ω/Sн + tн) · (1 - p_пакета)</p>
+                <p>Выбирается ω₃ с максимальной Sэ.</p>
+                <p><strong>Шаг 4.</strong> Определение оптимальной длины:</p>
+                <p style="margin-left: 20px;">ω* = (ω₂' + ω₃) / 2</p>
+                <p style="margin-left: 20px;">m = round(log₂(ω*));  ω*_опт = 2<sup>m</sup></p>
+                <p>Полученное значение обеспечивает компромисс между долей служебной информации и вероятностью ошибки.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        Лабораторная работа №4-5 | Вариант <span id="footerVar">1</span>
+    </div>
+</div>
+
+<script>
+    // База данных вариантов (из методички)
+    const variantsData = [
+        // вариант 1-10
+        {l: 32000, C: 64, Sn: 56000, K1: 1.3, tn: 0.01, pbit: 1e-4},
+        {l: 64000, C: 72, Sn: 64000, K1: 1.4, tn: 0.011, pbit: 1e-5},
+        {l: 128000, C: 80, Sn: 128000, K1: 1.5, tn: 0.012, pbit: 1e-6},
+        {l: 256000, C: 88, Sn: 256000, K1: 1.31, tn: 0.013, pbit: 1e-4},
+        {l: 512000, C: 96, Sn: 512000, K1: 1.41, tn: 0.014, pbit: 1e-5},
+        {l: 1024000, C: 104, Sn: 1500000, K1: 1.51, tn: 0.015, pbit: 1e-6},
+        {l: 2048000, C: 112, Sn: 2000000, K1: 1.32, tn: 0.016, pbit: 1e-4},
+        {l: 4096000, C: 120, Sn: 4800000, K1: 1.42, tn: 0.017, pbit: 1e-5},
+        {l: 8192000, C: 128, Sn: 10000000, K1: 1.52, tn: 0.018, pbit: 1e-6},
+        {l: 16384000, C: 136, Sn: 100000000, K1: 1.33, tn: 0.019, pbit: 1e-4},
+        // вариант 11-20
+        {l: 32768000, C: 144, Sn: 56000, K1: 1.43, tn: 0.02, pbit: 1e-5},
+        {l: 65536000, C: 152, Sn: 64000, K1: 1.53, tn: 0.01, pbit: 1e-6},
+        {l: 131072000, C: 160, Sn: 128000, K1: 1.34, tn: 0.011, pbit: 1e-4},
+        {l: 262144000, C: 168, Sn: 256000, K1: 1.44, tn: 0.012, pbit: 1e-5},
+        {l: 32000, C: 176, Sn: 512000, K1: 1.54, tn: 0.013, pbit: 1e-6},
+        {l: 64000, C: 184, Sn: 1500000, K1: 1.35, tn: 0.014, pbit: 1e-4},
+        {l: 128000, C: 192, Sn: 2000000, K1: 1.45, tn: 0.015, pbit: 1e-5},
+        {l: 256000, C: 200, Sn: 4800000, K1: 1.55, tn: 0.016, pbit: 1e-6},
+        {l: 512000, C: 208, Sn: 10000000, K1: 1.36, tn: 0.017, pbit: 1e-4},
+        {l: 1024000, C: 216, Sn: 100000000, K1: 1.46, tn: 0.018, pbit: 1e-5},
+        // вариант 21-25
+        {l: 2048000, C: 224, Sn: 56000, K1: 1.56, tn: 0.019, pbit: 1e-6},
+        {l: 4096000, C: 232, Sn: 64000, K1: 1.37, tn: 0.02, pbit: 1e-4},
+        {l: 8192000, C: 240, Sn: 128000, K1: 1.47, tn: 0.01, pbit: 1e-5},
+        {l: 16384000, C: 248, Sn: 256000, K1: 1.57, tn: 0.02, pbit: 1e-6},
+        {l: 32768000, C: 256, Sn: 512000, K1: 1.38, tn: 0.011, pbit: 1e-4}
+    ];
+
+    // Заданные длины пакетов для перебора
+    const omegaList = [512, 1024, 2048, 4096, 8192, 16384];
+    let chartInstance = null;
+
+    // Функция форматирования чисел
+    function formatNumber(x) {
+        if (x === undefined || x === null) return '-';
+        if (Math.abs(x) > 1e6) return x.toExponential(2);
+        if (Math.abs(x) > 1000) return x.toFixed(0);
+        if (Math.abs(x) < 0.001) return x.toExponential(2);
+        return x.toFixed(4);
+    }
+
+    function formatP(x) {
+        return x.toExponential(2);
+    }
+
+    // Обновление интерфейса при расчете
+    function calculate() {
+        const varNum = parseInt(document.getElementById('variantInput').value) - 1;
+        if (varNum < 0 || varNum >= variantsData.length) return;
+        
+        const d = variantsData[varNum];
+        
+        // Отображение исходных данных
+        document.getElementById('l_val').innerText = d.l + ' бит';
+        document.getElementById('C_val').innerText = d.C + ' бит';
+        document.getElementById('Sn_val').innerText = formatNumber(d.Sn) + ' бит/с';
+        document.getElementById('K1_val').innerText = d.K1;
+        document.getElementById('tn_val').innerText = d.tn + ' с';
+        document.getElementById('pbit_val').innerText = formatP(d.pbit);
+        document.getElementById('footerVar').innerText = varNum + 1;
+
+        // Расчет omega2
+        const omega2 = Math.sqrt(d.l * d.C);
+        const omega2k = d.K1 * omega2;
+        document.getElementById('omega2_formula').innerHTML = `√(${d.l}·${d.C}) = ${omega2.toFixed(2)} бит`;
+        document.getElementById('omega2k_formula').innerHTML = `${d.K1} · ${omega2.toFixed(2)} = ${omega2k.toFixed(2)} бит`;
+
+        // Перебор omega
+        let results = [];
+        let maxS = -Infinity;
+        let bestOmega = omegaList[0];
+
+        for (let w of omegaList) {
+            const p_packet = 1 - Math.pow(1 - d.pbit, w);
+            const S_eff = (w - d.C) / (w / d.Sn + d.tn) * (1 - p_packet);
+            results.push({w, p_packet, S_eff});
+            if (S_eff > maxS) {
+                maxS = S_eff;
+                bestOmega = w;
+            }
+        }
+
+        // Заполнение таблицы
+        let tableHtml = '';
+        for (let r of results) {
+            tableHtml += `<tr><td>${r.w}</td><td>${formatP(r.p_packet)}</td><td>${formatNumber(r.S_eff)}</td></tr>`;
+        }
+        document.getElementById('omegaBody').innerHTML = tableHtml;
+        document.getElementById('omega3_result').innerHTML = `Максимум: ω₃ = ${bestOmega} бит, Sэ_max = ${formatNumber(maxS)} бит/с`;
+
+        // Оптимальная длина
+        const omega_opt = (omega2k + bestOmega) / 2;
+        const m = Math.round(Math.log2(omega_opt));
+        const omega_opt_pow2 = Math.pow(2, m);
+        
+        document.getElementById('omega_opt').innerHTML = `(${omega2k.toFixed(2)} + ${bestOmega}) / 2 = ${omega_opt.toFixed(2)} бит`;
+        document.getElementById('m_val').innerHTML = `round(log₂(${omega_opt.toFixed(2)})) = ${m}`;
+        document.getElementById('omega_opt_pow2').innerHTML = `2<sup>${m}</sup> = ${omega_opt_pow2} бит`;
+
+        // График
+        if (chartInstance) chartInstance.destroy();
+        const ctx = document.getElementById('speedChart').getContext('2d');
+        chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: results.map(r => r.w + ' бит'),
+                datasets: [{
+                    label: 'Эффективная скорость Sэ, бит/с',
+                    data: results.map(r => r.S_eff),
+                    borderColor: '#b0c5d9',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#ffffff',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { labels: { color: '#e0e0e0' } }
+                },
+                scales: {
+                    x: { ticks: { color: '#b0b0b0' }, grid: { color: '#2a313a' } },
+                    y: { ticks: { color: '#b0b0b0' }, grid: { color: '#2a313a' } }
+                }
+            }
+        });
+    }
+
+    document.getElementById('calculateBtn').addEventListener('click', calculate);
+    window.addEventListener('load', calculate);
+</script>
+</body>
+</html>
